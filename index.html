@@ -8,19 +8,21 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; }
         
-        /* Header Customizado */
+        /* Header Responsivo */
         .header-container { 
             background: white; 
-            padding: 25px; 
+            padding: 20px; 
             border-bottom: 5px solid #1b5e20; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-            margin-bottom: 40px; 
+            margin-bottom: 25px; 
             display: flex; 
             align-items: center; 
-            gap: 25px; 
+            gap: 20px; 
+            flex-wrap: wrap;
         }
-        .header-logo { height: 75px; width: auto; }
-        .header-text h2 { color: #1b5e20; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+        .header-logo { height: 65px; width: auto; }
+        .header-text h2 { color: #1b5e20; font-weight: 800; margin: 0; letter-spacing: -0.5px; font-size: 1.6rem; }
+        .header-text h5 { font-size: 1rem; }
         
         /* Cards e Filtros */
         .card { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -28,18 +30,16 @@
             background: linear-gradient(135deg, #2e7d32, #1b5e20); 
             color: white; 
             text-align: center; 
-            padding: 25px; 
+            padding: 20px; 
             border-radius: 15px; 
             height: 100%; 
             display: flex; 
             flex-direction: column; 
             justify-content: center;
-            transition: transform 0.3s ease;
         }
-        .kpi-card:hover { transform: translateY(-5px); }
-        .filter-box { background: white; padding: 25px; border-radius: 15px; border: 1px solid #e0e0e0; margin-bottom: 30px; }
+        .filter-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-bottom: 20px; }
         
-        /* Estilos da Tabela */
+        /* Tabela e Scroll */
         .table-responsive { 
             max-height: 700px; 
             overflow-y: auto; 
@@ -53,23 +53,22 @@
             top: 0; 
             z-index: 10; 
         }
-        #dataTable th { padding: 15px; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
-        #dataTable td { padding: 12px 15px; vertical-align: middle; }
+        #dataTable th { padding: 15px; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
+        #dataTable td { padding: 12px 15px; vertical-align: middle; font-size: 0.9rem; }
         
         /* Botões e Badges */
         .btn-link-download { 
             background-color: #1b5e20; 
             color: white; 
             border-radius: 25px; 
-            padding: 6px 16px; 
+            padding: 6px 14px; 
             text-decoration: none; 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             font-weight: 500;
-            transition: all 0.3s ease; 
             display: inline-block; 
-            border: none;
+            white-space: nowrap;
         }
-        .btn-link-download:hover { background-color: #2e7d32; color: white; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+        .btn-link-download:hover { background-color: #2e7d32; color: white; transform: scale(1.05); }
         
         .badge-fauna { background-color: #ef6c00; color: white; }
         .badge-flora { background-color: #2e7d32; color: white; }
@@ -83,11 +82,23 @@
             padding-left: 15px; 
         }
 
-        /* Scrollbar customizada para a tabela */
-        .table-responsive::-webkit-scrollbar { width: 8px; }
-        .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; }
+        /* Ajustes Mobile */
+        @media (max-width: 768px) {
+            .header-container { justify-content: center; text-align: center; gap: 10px; }
+            .header-logo { height: 50px; }
+            .header-text h2 { font-size: 1.3rem; }
+            
+            /* Oculta coluna "Área" no mobile para melhor leitura */
+            #dataTable th:nth-child(2), 
+            #dataTable td:nth-child(2) { display: none; }
+            
+            .filter-box { padding: 15px; }
+            /* Garante que o texto longo do Manejo/Outros não quebre o alinhamento */
+            .form-check-label { font-size: 0.8rem; white-space: nowrap; }
+        }
+
+        .table-responsive::-webkit-scrollbar { width: 6px; }
         .table-responsive::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-        .table-responsive::-webkit-scrollbar-thumb:hover { background: #1b5e20; }
     </style>
 </head>
 <body>
@@ -100,24 +111,24 @@
     </div>
 </div>
 
-<div class="container-fluid px-4">
-    <div class="row mb-2">
-        <div class="col-md-9">
+<div class="container-fluid px-3 px-md-4">
+    <div class="row">
+        <div class="col-lg-9">
             <div class="filter-box shadow-sm">
                 <div class="row align-items-end g-3">
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold small">Filtrar por Ano</label>
+                    <div class="col-sm-6 col-md-3">
+                        <label class="form-label fw-bold small">Ano</label>
                         <select id="filterAno" class="form-select shadow-none" onchange="filterData()">
                             <option value="">Todos os Anos</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold small">Buscar por Título/Termo</label>
-                        <input type="text" id="searchTerm" class="form-control shadow-none" placeholder="Ex: Caatinga, Morcegos..." onkeyup="filterData()">
+                    <div class="col-sm-6 col-md-4">
+                        <label class="form-label fw-bold small">Buscar</label>
+                        <input type="text" id="searchTerm" class="form-control shadow-none" placeholder="Ex: Caatinga..." onkeyup="filterData()">
                     </div>
                     <div class="col-md-5">
                         <label class="form-label fw-bold small">Categorias Biológicas</label>
-                        <div class="d-flex gap-3 pt-1">
+                        <div class="d-flex flex-wrap gap-2 gap-md-3 pt-1">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="Fauna" id="chkFauna" onchange="filterData()" checked>
                                 <label class="form-check-label" for="chkFauna">Fauna</label>
@@ -135,36 +146,34 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="kpi-card shadow-sm">
+        <div class="col-lg-3">
+            <div class="kpi-card shadow-sm mb-4">
                 <h6 class="text-uppercase small opacity-75 fw-bold mb-1">Total de Pesquisas</h6>
-                <h1 id="kpiTotal" class="display-4 fw-bold m-0">0</h1>
+                <h1 id="kpiTotal" class="display-5 fw-bold m-0">0</h1>
             </div>
         </div>
     </div>
 
-    <h4 class="titulo-secao">Catálogo de Artigos e Trabalhos Científicos</h4>
+    <h4 class="titulo-secao">Catálogo de Artigos e Trabalhos</h4>
 
     <div class="card shadow-sm mb-5">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0" id="dataTable">
                 <thead>
                     <tr>
-                        <th style="width: 100px;">Ano</th>
-                        <th style="width: 150px;">Área</th>
+                        <th style="width: 80px;">Ano</th>
+                        <th style="width: 130px;">Área</th>
                         <th>Título da Pesquisa / Referência</th>
-                        <th style="width: 180px;" class="text-center">Acesso</th>
+                        <th style="width: 120px;" class="text-center">Acesso</th>
                     </tr>
                 </thead>
-                <tbody>
-                    </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
 </div>
 
 <script>
-    // Banco de Dados Integrado
     const db = [
         { ano: "1999", cat: "Flora", titulo: "Composição florística e fitossociologia de uma área de Caatinga em Contendas do Sincorá, Bahia", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAy0MLg9cRzRLXu5Qxn3cMqAYdbQnFP_BTO1SmS6VcLQbU?e=ou8Uha" },
         { ano: "2006", cat: "Manejo/Outros", titulo: "Produção de xilanase por fungos filamentosos isolados de solo de área de caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBo0YHHpnjsT7u7h7SzKMRxATn9Sj0VyBOUebzmzaRXe9w?e=6Q9ByH" },
@@ -260,7 +269,6 @@
 
     function init() {
         const selAno = document.getElementById('filterAno');
-        // Limpa e reinicia o seletor de anos
         selAno.innerHTML = '<option value="">Todos os Anos</option>';
         const anos = [...new Set(db.map(d => d.ano))].sort((a, b) => b - a);
         anos.forEach(a => {
@@ -275,7 +283,6 @@
     function filterData() {
         const ano = document.getElementById('filterAno').value;
         const term = document.getElementById('searchTerm').value.toLowerCase();
-        
         const cats = [];
         if(document.getElementById('chkFauna').checked) cats.push("Fauna");
         if(document.getElementById('chkFlora').checked) cats.push("Flora");
@@ -288,7 +295,6 @@
             return matchAno && matchCat && matchTerm;
         });
 
-        // Ordenar por ano (mais recente primeiro)
         filtered.sort((a, b) => parseInt(b.ano) - parseInt(a.ano));
         render(filtered);
     }
@@ -296,37 +302,30 @@
     function render(data) {
         const tbody = document.querySelector('#dataTable tbody');
         const kpi = document.getElementById('kpiTotal');
-        
         if (kpi) kpi.innerText = data.length;
         if (!tbody) return;
 
         if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted italic">Nenhum resultado encontrado para os filtros selecionados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted italic">Nenhum resultado encontrado.</td></tr>`;
             return;
         }
 
         let rowsHtml = '';
         data.forEach(d => {
             const badgeClass = d.cat === 'Fauna' ? 'badge-fauna' : (d.cat === 'Flora' ? 'badge-flora' : 'badge-outros');
-            let linkBtn = `<span class="text-muted small">Indisponível</span>`;
-            
-            if (d.link && d.link.trim() !== "") {
-                const url = d.link.startsWith('http') ? d.link : 'https://' + d.link;
-                linkBtn = `<a href="${url}" target="_blank" rel="noopener" class="btn-link-download text-center">Abrir PDF</a>`;
-            }
+            const url = d.link && d.link.startsWith('http') ? d.link : 'https://' + d.link;
+            const linkBtn = d.link ? `<a href="${url}" target="_blank" rel="noopener" class="btn-link-download">Abrir PDF</a>` : '-';
 
             rowsHtml += `<tr>
                 <td class="fw-bold text-success">${d.ano}</td>
                 <td><span class="badge ${badgeClass} px-3 py-2">${d.cat}</span></td>
-                <td class="small fw-medium">${d.titulo}</td>
+                <td class="fw-medium">${d.titulo}</td>
                 <td class="text-center">${linkBtn}</td>
             </tr>`;
         });
-        
         tbody.innerHTML = rowsHtml;
     }
 
-    // Inicialização segura após o carregamento do DOM
     document.addEventListener('DOMContentLoaded', init);
 </script>
 
