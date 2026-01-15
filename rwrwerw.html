@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Pesquisas - FLONA Contendas do Sincorá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; }
+        
+        .header-container { 
+            background: white; 
+            padding: 20px; 
+            border-bottom: 5px solid #1b5e20; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            margin-bottom: 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            flex-wrap: wrap;
+        }
+        .header-logo { height: 65px; width: auto; }
+        .header-text h2 { color: #1b5e20; font-weight: 800; margin: 0; letter-spacing: -0.5px; font-size: 1.6rem; }
+        .header-text h5 { font-size: 1rem; }
+        
+        .card { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .kpi-card { 
+            background: linear-gradient(135deg, #2e7d32, #1b5e20); 
+            color: white; 
+            text-align: center; 
+            padding: 20px; 
+            border-radius: 15px; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+        }
+        .filter-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-bottom: 20px; }
+        
+        .table-responsive { 
+            max-height: 700px; 
+            overflow-y: auto; 
+            background: white; 
+            border-radius: 15px; 
+        }
+        #dataTable thead { 
+            background-color: #1b5e20; 
+            color: white; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+        }
+        #dataTable th { padding: 15px; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; border: none; }
+        #dataTable td { padding: 12px 15px; vertical-align: middle; font-size: 0.9rem; border-bottom: 1px solid #eee; }
+        
+        .btn-link-download { 
+            background-color: #1b5e20; 
+            color: white !important; 
+            border-radius: 25px; 
+            padding: 6px 14px; 
+            text-decoration: none; 
+            font-size: 0.8rem; 
+            font-weight: 500;
+            display: inline-block; 
+            transition: all 0.3s;
+        }
+        .btn-link-download:hover { background-color: #2e7d32; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        
+        .badge-fauna { background-color: #ef6c00; color: white; }
+        .badge-flora { background-color: #2e7d32; color: white; }
+        .badge-outros { background-color: #455a64; color: white; }
+        
+        .titulo-secao { 
+            color: #1b5e20; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            border-left: 6px solid #1b5e20; 
+            padding-left: 15px; 
+        }
+
+        @media (max-width: 768px) {
+            .header-container { justify-content: center; text-align: center; }
+            #dataTable th:nth-child(2), #dataTable td:nth-child(2) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-container">
+    <img src="https://amazoniaprotege.mpf.mp.br/imagens/logo-parceiro-icmbio.png" alt="Logo ICMBio" class="header-logo">
+    <div class="header-text">
+        <h2>Painel de Pesquisas Científicas</h2>
+        <h5 class="text-muted fw-normal">Floresta Nacional Contendas do Sincorá</h5>
+    </div>
+</div>
+
+<div class="container-fluid px-3 px-md-4">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="filter-box shadow-sm">
+                <div class="row align-items-end g-3">
+                    <div class="col-sm-6 col-md-3">
+                        <label class="form-label fw-bold small">Ano</label>
+                        <select id="filterAno" class="form-select shadow-none" onchange="filterData()">
+                            <option value="">Todos os Anos</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <label class="form-label fw-bold small">Buscar Título</label>
+                        <input type="text" id="searchTerm" class="form-control shadow-none" placeholder="Ex: Caatinga..." onkeyup="filterData()">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold small">Categorias Biológicas</label>
+                        <div class="d-flex flex-wrap gap-3 pt-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="Fauna" id="chkFauna" onchange="filterData()" checked>
+                                <label class="form-check-label" for="chkFauna">Fauna</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="Flora" id="chkFlora" onchange="filterData()" checked>
+                                <label class="form-check-label" for="chkFlora">Flora</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="Manejo/Outros" id="chkOutros" onchange="filterData()" checked>
+                                <label class="form-check-label" for="chkOutros">Manejo/Outros</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="kpi-card shadow-sm mb-4">
+                <h6 class="text-uppercase small opacity-75 fw-bold mb-1">Total de Pesquisas</h6>
+                <h1 id="kpiTotal" class="display-5 fw-bold m-0">0</h1>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="titulo-secao">Catálogo de Artigos e Trabalhos</h4>
+
+    <div class="card shadow-sm mb-5">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="dataTable">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Ano</th>
+                        <th style="width: 150px;">Área</th>
+                        <th>Título da Pesquisa / Referência</th>
+                        <th style="width: 120px;" class="text-center">Acesso</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const db = [
+        { ano: "1999", cat: "Flora", titulo: "Composição florística e fitossociologia de uma área de Caatinga em Contendas do Sincorá, Bahia", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAy0MLg9cRzRLXu5Qxn3cMqAYdbQnFP_BTO1SmS6VcLQbU?e=ou8Uha" },
+        { ano: "2006", cat: "Manejo/Outros", titulo: "Produção de xilanase por fungos filamentosos isolados de solo de área de caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBo0YHHpnjsT7u7h7SzKMRxATn9Sj0VyBOUebzmzaRXe9w?e=6Q9ByH" },
+        { ano: "2006", cat: "Flora", titulo: "Comparação da técnica tradicional e do método turbidimétrico automatizado no cultivo em diferentes fontes de carbono de fungos filamentosos isolados de solo de área de Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBgoOpIGIecQocwpECoHBVwAc7rdZ6lWKA8frrKL-ruS-M?e=HMeoOp" },
+        { ano: "2006", cat: "Flora", titulo: "Seleção de espécies/procedências do gênero Eucalyptus potenciais para o semiárido do Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCFEgj2LUHaSbCBkCKhJX11AXNDothYsCZIqIZKVS2zgJc?e=SZsBWk" },
+        { ano: "2007", cat: "Fauna", titulo: "Estrutura da comunidade de morcegos (Mammalia: Chiroptera) da Floresta Nacional Contendas do Sincorá – BA", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAOhllipKiWTrjpgwgudnp2AXN9LseUqwlvw5kIgiK-69Y?e=ffj1RU" },
+        { ano: "2008", cat: "Fauna", titulo: "Fauna de Dípteros Parasitas de Morcegos em uma área de Caatinga do nordeste do Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBCBma2YmipRL4IMJ7N42uVAQGPKUKWAdIXmVXjb4QX6sg?e=ZWUVea" },
+        { ano: "2006", cat: "Manejo/Outros", titulo: "Plano de manejo da Floresta Nacional Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQC_dckHqsF7TLFmv2xQKNMkAZaA6J2OELnDZQQBKniO3sw?e=turAR0" },
+        { ano: "2008", cat: "Manejo/Outros", titulo: "Diagnóstico e mapeamento das ações de comunicação e educação ambiental no âmbito do SNUC", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCmN_yQmVLfTp3Udwwe3ShBARVL7YZ7XrXLQxqYTn3Wa0U?e=02Cf6W" },
+        { ano: "2009", cat: "Fauna", titulo: "Hoplosternum littorale na Floresta Nacional Contendas do Sincorá, Bahia: resultados parciais", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQChb8BeL5elT469agUH9v56ASFAx2fvaWaYA3z_R8V4xEM?e=NLzI0K" },
+        { ano: "2009", cat: "Fauna", titulo: "Diversidade de formigas de áreas preservadas e em regeneração da Caatinga da FLONA Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD_h4nQKbAuSLO2CgYF4jzhAQy4eo-T6rR4uoG59sFxXvY?e=08h3S1" },
+        { ano: "2009", cat: "Flora", titulo: "Avaliação das atividades antimicrobiana, antioxidante e anti-inflamatória de Anadenanthera macrocarpa", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQChb8BeL5elT469agUH9v56ASFAx2fvaWaYA3z_R8V4xEM?e=GqbaCf" },
+        { ano: "2011", cat: "Flora", titulo: "Avaliação das atividades antimicrobiana, antioxidante e anti-inflamatória de Anadenanthera macrocarpa (Benth.) Brenan", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDy9_ZUsIimSq1wYMrqqwe2AWlZG2obQnCiZ86B-yNt7gI?e=isS8km" },
+        { ano: "2011", cat: "Fauna", titulo: "Avifauna da FLONA Contendas do Sincorá, Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBL1TU8tXO0QKrV832YEZWjAX-_m_GjBKdemFgVg_8KT9o?e=g8udNz" },
+        { ano: "2012", cat: "Fauna", titulo: "Dung beetles (Coleoptera: Scarabaeidae) of the Floresta Nacional Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCCekcwIbG9RKF0FoXqztoaAUPVvs2fPtSWxq-ZGjww9Ds?e=JJ4G00" },
+        { ano: "2012", cat: "Fauna", titulo: "Riqueza de formigas em áreas preservadas e em regeneração de caatinga arbustiva", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCxUNNbD5ZuTqJsbhvJLCwCAVj_cs0OreJgcfpDaG-JNjY?e=lTHrR7" },
+        { ano: "2012", cat: "Flora", titulo: "Avaliação da atividade antimicrobiana do extrato etanólico de Phanera flexuosa", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD2bKgGRMPFTL-AslU4no7DASag6WJGSQDQQOsKDcg0PVc?e=Xb5ebv" },
+        { ano: "2012", cat: "Flora", titulo: "Flora da Floresta Nacional Contendas do Sincorá - Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQADI1z_m0h-TYX0MF6BakzJAdjrw9jtC1WhxgM6Jvg1KIY?e=Hqhw03" },
+        { ano: "2012", cat: "Flora", titulo: "Plantas medicinais usadas pela comunidade do povoado de Laços (Tanhaçú/Bahia)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAp595lRgg-SJDbkp2c1HqVAXBC4LdrCMlZ8aIMi6lux1E?e=xVoWpA" },
+        { ano: "2012", cat: "Fauna", titulo: "Monitoramento de mamíferos terrestres de médio e grande porte em Unidades de Conservação Federais da Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD5CS-aGecvTKzhCU0ZU7o9ARdDt_Angh2gwPk0zqfLbPw?e=1HdsDw" },
+        { ano: "2012", cat: "Fauna", titulo: "Monitoramento de Squamata em Unidades de Conservação do bioma Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBTmYYBH01FSo4IR-8NWB4UATnq46Y0xVdJKFJUwRIcS4o?e=HbehQf" },
+        { ano: "2012", cat: "Flora", titulo: "Diversidade de cactáceas na Floresta Nacional de Contendas do Sincorá - BA: implicações para o monitoramento", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDdKEjtX4o9SJHVQ10dlqGPAbPngfQ1i0j8_brP3a-VY60?e=fyrqff" },
+        { ano: "2013", cat: "Manejo/Outros", titulo: "Avaliação do perfil químico e atividade larvicida do óleo de Croton linearifolius sobre o Aedes aegypti", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCQpfyghzIkQ4ose7FFBY-AAXqwju_Qx3Pp4KjtV6NT5uU?e=ey2cqC" },
+        { ano: "2013", cat: "Flora", titulo: "Xilanase de Penicillium chrysogenum: produção em um resíduo agroindustrial, purificação e propriedades bioquímicas", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDctBf907GYTKWrR3IrGVmzAe-b1-4FXimfa2lBWrP0YJQ?e=jP4bqR" },
+        { ano: "2013", cat: "Flora", titulo: "Isolamento e identificação de compostos bioativos de Mimosa hostilis Benth.", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD1Er_vrZY4Sp50EkFzMt80AesG6KcGNeO-dfBtge69IG8?e=Ow7g3Z" },
+        { ano: "2014", cat: "Flora", titulo: "Herbivoria e características foliares em seis espécies de plantas da Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCZWwMG-O91TaSI2yEGN0loAUxJLf6-n_h7ScJJ3NR5TaU?e=nLzpgt" },
+        { ano: "2014", cat: "Flora", titulo: "Prospecção química e avaliação da atividade antioxidante de Croton linearifolius (Euphorbiaceae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBL_JchlpjPRpdfAI6H94eRAaBPCLFrJzqC8UDx_6mmYsM?e=oQhupW" },
+        { ano: "2014", cat: "Flora", titulo: "Bromeliads in Caatinga: an oasis for invertebrates", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAzQf6CtjxOSrrwFZ4gjw_KAUAXifhn9qTkroy04OKSG_c?e=a7gPCj" },
+        { ano: "2015", cat: "Flora", titulo: "Levantamento florístico e padrões de distribuição de Cactaceae na Serra do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCfPjnHlpJoRb2T9a5CGHCpAc81xgtDgaAV3lajmhKYhdQ?e=j2U7R1" },
+        { ano: "2015", cat: "Fauna", titulo: "Testing the Climate Variability Hypothesis in thermal tolerance limits of tropical tadpoles", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAgUPpqwU4qSoeSk77ABYviARR9EN3RdDM8sU0Eq-Ngrgg?e=p5sSGg" },
+        { ano: "2015", cat: "Fauna", titulo: "Carnívoros na Caatinga: avaliação do papel da Floresta Nacional Contendas do Sincorá (BA), como refúgio para as populações", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCQ5z-mgVMSTqk2QHEghsFpARa-m6MFkonNRNX8Six4Xuw?e=YNr4Nl" },
+        { ano: "2015", cat: "Fauna", titulo: "Escorpiões do complexo Tityus stigmurus (Buthidae): delimitação de espécies e relação com bactérias do gênero Wolbachia", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBxqJigg9g3RZHS4ebiJ-0SAU2Ho44TFZVL7qIwKOOCDrw?e=ESUPo0" },
+        { ano: "2015", cat: "Fauna", titulo: "Notas sobre interações competitivas envolvendo formigas poneromorfas", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQB1Be5M0xLXQblhzsm_HYe_AaNzwFx-rivV6DQvJdii-us?e=KGLPgr" },
+        { ano: "2015", cat: "Fauna", titulo: "Bioatividade da raiz de Poincianella bracteosa (Tul.) L.P. Queiroz (Fabaceae) sobre larvas de Aedes aegypti (Linnaeus, 1762) (Diptera: Culicidae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBXa4sCzNO0SZ-e1N8ItXnhAQQudFx9P4totD3bd36ki_g?e=4p5ojQ" },
+        { ano: "2015", cat: "Fauna", titulo: "Estratégias de competição entre espécies de formigas em um fragmento de vegetação de Caatinga, Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCuwl76mZBUQp_DaAg-4u4JAWyr3oJ7JA9x6PKKWxyXbgQ?e=P1dED8" },
+        { ano: "2015", cat: "Flora", titulo: "Estudos genético-moleculares em Croton heliotropiifolius e Croton linearifolius", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBERqhE_7GCS43O4uxyD68DAS5i0vw_x6xfy_7-QyymBvU?e=reWUwq" },
+        { ano: "2015", cat: "Flora", titulo: "Genetic diversity in populations of Maytenus truncata Reiss, 1861", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCcxl6vsdHnTIcBTyUWfu3LAYfJuQTnHUHKezYQxbdw3H8?e=hGuYV6" },
+        { ano: "2015", cat: "Flora", titulo: "Avaliação da atividade anti-inflamatória e antinociceptiva das frações da folha de Cenostigma cf. macrophyllum (Leguminosae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCWwHGOtoiORrObkYTUjhIcAT7N4tYLvhUxpjC2pvZY4lc?e=W3tt3T" },
+        { ano: "2015", cat: "Manejo/Outros", titulo: "Unidade de Conservação e comunidade local: uma relação em construção", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDGVDFnRUvgSoGMd59NTCaxAYgm68PiYnIRkFbxeQp19ak?e=L93Wei" },
+        { ano: "2016", cat: "Flora", titulo: "Cactus survey at the Floresta Nacional of Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDMDNcc0-lISo1oZesspfVwAYVTOEAtEB14MBoCUge0vX0?e=vGGjRy" },
+        { ano: "2016", cat: "Flora", titulo: "Herbivoria e características foliares em plantas da Caatinga do nordeste brasileiro", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD1_sGnOv4tSKmp6Sb2x91mARixlu6l9RDOgM2hZ6X8T4c?e=8WDktO" },
+        { ano: "2016", cat: "Manejo/Outros", titulo: "Biomassa microbiana e carbono orgânico do solo em Caatinga sob manejo florestal", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBLMlhZMEQzQIZVfZkeQcvaAVhN2WHjIucY1LS2W8mh-Qk?e=KMewJ5" },
+        { ano: "2016", cat: "Manejo/Outros", titulo: "Áreas prioritárias para conservação de aves ameaçadas de extinção do bioma Caatinga frente às mudanças climáticas e ameaças antrópicas", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCjQ2Ce14SDQJkgFqud-CVpAR6DdflQsMI_fhD9WbN4_Bg?e=KDDl8f" },
+        { ano: "2016", cat: "Manejo/Outros", titulo: "Bacias hidrográficas e unidades de conservação no Brasil: dificuldades e perspectivas para a gestão integrada", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDurOFPudQdQYnU7G8VyCGHAfgir_mMDN4Y20L1WXfTB3c?e=BVNxJZ" },
+        { ano: "2016", cat: "Flora", titulo: "Avaliação da atividade anti-inflamatória e antinociceptiva do extrato etanólico do caule de Aeschynomene martii Benth. (tripa-de-galinha)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBv3OYdgKFqTpy3KGGitx24AWDjrUuJgUuJPy2G5d4EdZY?e=2AaSYv" },
+        { ano: "2016", cat: "Flora", titulo: "Flora da Bahia: Guapira (Nyctaginaceae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCZzYXz9_B3T4WbJIozoRV3AV50j2hIaYP4C4hqi5h8o44?e=hBBDbd" },
+        { ano: "2016", cat: "Fauna", titulo: "História natural, biogeografia e genética de populações de Partamona rustica, uma abelha endêmica das florestas secas do Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQArJdlFdMOPQYanQ1EfsMZjAblEk4IvAIkhq7NBrIXuxnQ?e=GCtEcW" },
+        { ano: "2016", cat: "Flora", titulo: "Estimativas genéticas em Croton linearifolius Müll. Arg. via marcadores moleculares", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDvnMsw9ecYRIq7WyymWXQPASVLD6wwp8brXKIcD0PehVk?e=UBWCBc" },
+        { ano: "2016", cat: "Flora", titulo: "Flora da Bahia: Turneraceae", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAs_Jy6WiGdRLqXGTax8h0UASDWD0uEiPJLVdrbbLDauWE?e=c51imQ" },
+        { ano: "2016", cat: "Fauna", titulo: "Advertisement call of Scinax camposseabrai (Bokermann, 1968) (Anura: Hylidae), with comments on the call of three species of the Scinax ruber clade", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAXTWWHKYbsRal7q65_UfOvASyRVbYnW8Q3HJiGyVJJ8ho?e=JXjKxA" },
+        { ano: "2016", cat: "Flora", titulo: "Patterns of Cactaceae species distribution in a protected area in Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBIaW43SaYPSp1-XyIwvkflAd-0BW1FCXXsTIrahPoiLW4?e=RqiFye" },
+        { ano: "2017", cat: "Flora", titulo: "Biomassa de espécies florestais em área de caatinga arbórea", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCHQlwcPPdzRYb_ktU8OstLAWpQxEyPkI0SKPo1-T6uauY?e=lOXfbi" },
+        { ano: "2017", cat: "Fauna", titulo: "Bioatividade dos extratos obtidos da parte aérea de Aspidosperma pyrifolium (Martius) sobre larvas de Aedes aegypti", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAEPDlxorZLQLSu40Jxe130ARHeglD0aMCqbJc1WShISd0?e=whq56S" },
+        { ano: "2017", cat: "Manejo/Outros", titulo: "Arbuscular mycorrhizal fungi in soils of arboreal Caatinga submitted to forest management", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAIEn6sRuZrQZavKAi6lTM-AYTt9sv8gH3205cCHK9v6Eg?e=PRpuQb" },
+        { ano: "2017", cat: "Flora", titulo: "Dispersão de frutos e sementes na FLONA Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCS1rIXPjncRbZkUVb_iutSAdUodOnII7-n7-DP1JnWX0s?e=u7mk1j" },
+        { ano: "2017", cat: "Fauna", titulo: "Lower ant Diversity on Earth Mounds in a Semi-Arid Ecosystem", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDXAICndNzUSIi9T8yihISXAZFWIuneoIaxjsNdBlQBdaQ?e=ZqctgW" },
+        { ano: "2017", cat: "Fauna", titulo: "Dung beetles in a Caatinga Natural Reserve: threatened dry-forest", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBx4jnocEJFRb910uSzNz5KAesLwfZbzX9X97xC3lffHyk?e=HdEUyb" },
+        { ano: "2017", cat: "Flora", titulo: "Estrutura populacional de Commiphora leptophloeos em caatinga arbórea", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBHo22MbiZCRrwsX9E_EYMZAY6P2VkuBtpX-kkmV96KnuA?e=uUyMwP" },
+        { ano: "2017", cat: "Flora", titulo: "Composição florística e estrutura fitossociológica em Caatinga arbórea", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAWpmfurhTdSr-IBWzFSxBPAbCLKukxdX10H3muE8MWhCI?e=x31gmi" },
+        { ano: "2017", cat: "Manejo/Outros", titulo: "Macrofauna edáfica e decomposição da serapilheira sob manejo florestal", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDaAg2j8V9GQ6fFxCYVzE2VAeOxRuVKaM1AYIGMJ_9hITg?e=m7sbZb" },
+        { ano: "2017", cat: "Manejo/Outros", titulo: "Estrutura da regeneração natural em caatinga arbórea", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAo34OFdu_UT4fp83lU0Y2NAQ9rey0TJnGWsMin_FIhLeQ?e=cRqseL" },
+        { ano: "2018", cat: "Flora", titulo: "Revisão taxonômica de Amorimia WR Anderson (Malpighiaceae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAfGrbBccFASqR7EoXMRbL0AbzrmMe1XU6O1zOdPN_lEXY?e=Zxjmpm" },
+        { ano: "2018", cat: "Flora", titulo: "Atividade anti-inflamatória e toxicológica de Aeschynomene martii Benth.", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAIuJueEFvfRJsWUz17RAsfAeOSl5ne2IUVcAj2KcvXD-o?e=8rM4xP" },
+        { ano: "2018", cat: "Flora", titulo: "Atividades cicatrizante e toxicológica da casca de Phanera flexuosa", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQArYCJpZZgfRbX_DQwhOaITAZ38qLiHhopKiiTcjRhzRMs?e=hjZ4hn" },
+        { ano: "2018", cat: "Manejo/Outros", titulo: "Carbono orgânico em agregados do solo em caatinga sob manejo", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCPUzh_LBABQqOhdoB6wcZJAaBCba-5F2bG5Q3ARJQUnSw?e=5dHoLB" },
+        { ano: "2018", cat: "Flora", titulo: "Chemical composition of the essential oil of the aerial parts of Croton tetradenius (Euphorbiaceae) and its bioactivity on Aedes aegypti (Diptera: Culicidae) in relation to different collection periods", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBvsH70tuDkS7axBxhbh5JVAdqkebTp7TrKjneHOtZtNsA?e=H4E4Uq" },
+        { ano: "2018", cat: "Manejo/Outros", titulo: "Oxidizable fractions of soil organic carbon in Caatinga forest", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDhG29Nj2w9S7FOCwy6cm6JAcRaZu-uM9RPhMjsu6XlH_8?e=CkI7bk" },
+        { ano: "2018", cat: "Manejo/Outros", titulo: "Agroindustrial biomass for xylanase production by Penicillium chrysogenum: purification, biochemical properties, and hemicellulose hydrolysis", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCeufk1Jnd7T5af1MtxOYyDAdZEo7D56A-jD_O0B4CZXHw?e=C1HF5l" },
+        { ano: "2018", cat: "Manejo/Outros", titulo: "Número de indivíduos do algoritmo NEAT para estimativa do volume comercial da Caatinga arbórea", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDOF5M7boYlRYGv375e5uQ2AdJhIHAniva_m2zLe9oGElQ?e=wubIAI" },
+        { ano: "2019", cat: "Flora", titulo: "Florística e fitossociologia na FLONA Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDGri3kMI-EQYDoW4wgTfo3AVJmP1qy_gvlKM7I_Q940vE?e=GT1e3o" },
+        { ano: "2019", cat: "Flora", titulo: "Diversity and genetic structure in natural populations of Croton linearifolius", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDcLNsTexFmT7C3sVFSuWtIAVby3KdBncP-sOeSZjnV9H4?e=qllyRA" },
+        { ano: "2019", cat: "Flora", titulo: "Flowering plants of Contendas do Sincorá National Forest", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDrChBW3VG5Tq4r4jXUJmlSAcQlft-lFUAuyDlpReK-JHU?e=oJMQjy" },
+        { ano: "2019", cat: "Flora", titulo: "Determinação de fenólicos e flavonoides totais e avaliação da capacidade antioxidante de extratos de Poincianella bracteosa (Fabaceae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDTd109MED5Q6MrIM9JRxkOAQJYBOfD6bGvQ5IAY8TIxj0?e=lBxrva" },
+        { ano: "2019", cat: "Flora", titulo: "Geographic review on specimens of Caatinga in Jardim Botânico do Rio de Janeiro", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDvtcjz37wcSbaVGjOwhxd9AdfeqOaeFOFa65pP9Ltp3H0?e=GmbjG5" },
+        { ano: "2019", cat: "Flora", titulo: "Avaliação do potencial larvicida de extratos etanólicos do caule de Croton argyrophyllus (Euphorbiaceae: Crotonoideae) sobre Aedes aegypti (Diptera: Culicidae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBdYzNaJ41RT5GHcHj4xscSAc3ymCzk2DvaRn3Iz7AhH0s?e=W2NBhS" },
+        { ano: "2019", cat: "Fauna", titulo: "Reproductive behavior of Pithecopus nordestinus (Anura)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDfh360DPb7S40YRjb54lWFAbnoOS0pWBSBSYERRymvL24?e=ThGO67" },
+        { ano: "2019", cat: "Manejo/Outros", titulo: "Effect of different forest management practices on soil macrofauna", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAQcSNu-MfqSJmYVXAIAz2QAcDXncXBuBb61w_6bGocZpM?e=fxeWcm" },
+        { ano: "2020", cat: "Flora", titulo: "Atividade antimicrobiana de Schinopsis brasiliensis sobre Streptococcus mutans", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAwF4C1OEoqQ6n1IS5w7l3LAV7Npa3y8uZEnDnAR9pncHg?e=nVUki8" },
+        { ano: "2020", cat: "Flora", titulo: "Avaliação da atividade antimicrobiana da folha de Phanera flexuosa", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCTzqRT6ETpT7ZKUdiDxJXWAYKitL8rJWO2r88rhs8IclQ?e=fqNKhT" },
+        { ano: "2020", cat: "Fauna", titulo: "A neotype for Hyla x-signata Spix, 1824 (Amphibia, Hylidae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDSkyX5SNDRS65eUQCI86pGAb0MDr3_zQfXbFgjR_5o44o?e=F2YxaG" },
+        { ano: "2020", cat: "Fauna", titulo: "Occurrence of leaf-cutting ant Atta sexdens related to unpaved roads", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBJs_utmlLPQa-X53ocIKFgAQNnRReEMqr7CyRQFdNrlIY?e=e2joag" },
+        { ano: "2020", cat: "Fauna", titulo: "Processos de montagem e estrutura das comunidades de lagartos da Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBIFNShGz1oSqT-sDzE3QzLAbfOKsLU6UwXcZaBLdhrQXs?e=PgWDb4" },
+        { ano: "2020", cat: "Flora", titulo: "Floristic composition and similarity of a Caatinga forest area", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCIH8mXZSFGRbxJe1ofmEXSAS403cgKfslRm5YTxxAkP34?e=5l8AJb" },
+        { ano: "2020", cat: "Flora", titulo: "Avaliação do efeito do extrato etanólico da raiz de Aspidosperma pyrifolium sobre o desenvolvimento do Aedes aegypt", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDsq3HgrTHbR5007qqTtJXcATavO4Mq5ZfIpNHbeEp8IYg?e=O5OnkV" },
+        { ano: "2020", cat: "Flora", titulo: "Composição química e atividade ovicida do óleo essencial das folhas de Croton argyrophyllus (Euphorbiaceae) sobre Aedes aegypti (Diptera: Culicidae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAlHSnIWSCzTYRG2jPOZEjMAdNHW9EuHL6yQ5xS8STTmFM?e=Zqbbnn" },
+        { ano: "2020", cat: "Manejo/Outros", titulo: "Parecer sobre o Zoneamento Ecológico-Econômico (ZEE) da Bahia", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQASwrozS_OuS6UyEJxnBDxkAdDQD7D_mIMCI0gOdav-qf4?e=5I1UE9" },
+        { ano: "2020", cat: "Manejo/Outros", titulo: "Efeito do manejo florestal da Caatinga no estoque de carbono orgânico em agregados do solo", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDfvab_IByWQoot4UekkZIEAR93uAQ4TEhYdhPRb9NSyYw?e=UkCUxQ" },
+        { ano: "2020", cat: "Manejo/Outros", titulo: "Short-term effects of forest management on soil microbial biomass and activity in caatinga dry forest, Brazil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQB27rlklaNGTK19q8nHHhn-AXeg-g4R65RkXuewshCDKF8?e=SqOGpS" },
+        { ano: "2020", cat: "Manejo/Outros", titulo: "Form Quotient in Estimating Caatinga Tree Volume", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCze7W1y8WKQYW3czwNj3GnAVv9aelNMhwWxGDIxiBVdeM?e=MTFmbp" },
+        { ano: "2021", cat: "Manejo/Outros", titulo: "Floresta Nacional Contendas do Sincorá (Geral)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCsqhWEva0USJOLnX2dOAV7AS6yOIB9wod8iW83jBj6Kkk?e=jVhah2" },
+        { ano: "2021", cat: "Fauna", titulo: "Revisão taxonômica das aranhas neotropicais do gênero Idiops Perty, 1833", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBVGsZ0-8OXTaHqUxT4jjbEAcG2r2b5EOAIkscic7H-Ym8?e=hFl4if" },
+        { ano: "2021", cat: "Manejo/Outros", titulo: "Florística e estrutura da regeneração natural de Caatinga Arbórea", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDieFrdDSwVRazCRj2jzeCsAdWbhW_AyBwZTZzcu7khTWs?e=NGrYJl" },
+        { ano: "2021", cat: "Fauna", titulo: "Association of giant ant Dinoponera quadriceps nests with termite mounds and landscape variables in a Caatinga dry forest, Brazil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDBloPpEDsQToNcIvjBKV2vActlh7hrVi6Skkm8yc72EVo?e=snCByD" },
+        { ano: "2021", cat: "Manejo/Outros", titulo: "Cidadania ambiental: um processo de (re)encantamento pela Floresta Nacional de Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBafGyPFERGSqsBir1O4YfWAf9PiMUG2QMTs7lr5_f9t1Q?e=uT0RFF" },
+        { ano: "2021", cat: "Fauna", titulo: "Large ants are not easy - the taxonomy of Dinoponera Roger", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAqH9l_TQqPR4AmQgfDykkxAcDBBv06KaBJ8Y53mora1kg?e=pcODd1" },
+        { ano: "2021", cat: "Manejo/Outros", titulo: "Tamanho da população no treinamento de RNA para volume comercial", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBETwXZXtKNRqEHBpa2S6_YAeBSX8W08Ok8T05aapwwbMU?e=e6eNIo" },
+        { ano: "2021", cat: "Flora", titulo: "Flora da Bahia: Onagraceae", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQB43vmW0s1qS59nCg9vJc54AZ64_cimG0pFxLaVJHO5hXU?e=1H25wb" },
+        { ano: "2021", cat: "Manejo/Outros", titulo: "A-amylase production obtained from Aspergillus niger residue", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCdqSf6TQ1RTYNIKvjtsMJNAai9z7SlwA2AEKrhJFOJ-wU?e=gnDGsa" },
+        { ano: "2021", cat: "Flora", titulo: "Distribution and conservation of Cactaceae in Dry Tropical Forests", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQABbUbCXNk_SoR7lYLpC8fXAXGwkWWPwKTJS86dV7sif3c?e=1Gwp1z" },
+        { ano: "2021", cat: "Manejo/Outros", titulo: "Short-term effects of forest management on litter decomposition", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDxjLcP2EUoT78FPxBnrt1xAT2_CvRJLYl9Bls7M9ExwmE?e=OKhl7M" },
+        { ano: "2022", cat: "Manejo/Outros", titulo: "Surviving temperature extremes: thermal tolerance in Caatinga tadpoles", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD9987gU4U9SJqNjIFUiOdBAWCN3E2qh5i3m2osBVRlGaI?e=VwDSUH" },
+        { ano: "2022", cat: "Manejo/Outros", titulo: "Prediction of diametric structures in semiarid forest (Caatinga)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAXyTQLbFjvSJV2YcL_H47EAWsSM4zz63gt_zMoWEdWVV0?e=rolkh8" },
+        { ano: "2022", cat: "Fauna", titulo: "A sazonalidade influencia a diversidade e distribuição das espécies de formigas da Caatinga?", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAjRAdfAV9QSqr8tTUd6jsFAUB0S8s0v8riiAflp6i46gU?e=VD6mta" },
+        { ano: "2022", cat: "Manejo/Outros", titulo: "Diametric distribution modeling of forest species in arboreal Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD1tamy1wYKRIj7g16g4HNAAZPmURjzqLDZPdfyF-8MuEI?e=0PFu0q" },
+        { ano: "2022", cat: "Fauna", titulo: "Uso de múltiplas metodologias de coleta no levantamento de abelhas solitárias em uma região do semiárido brasileiro", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBDgAMe8vjAS70Kk9HfveppAcIOKWN6Y5ZyOJODr-aHBzg?e=Pp1kMF" },
+        { ano: "2022", cat: "Fauna", titulo: "Redescription of the external and internal oral cavity morphology of the tadpole of Ceratophrys aurita (Raddi, 1823) (Anura: Ceratophryidae) from the Caatinga domain, Bahia, northeast Brazil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQA14UNG7M3zRYmzcYiXkkFaAXtu5jurVeFZZC4eW6xr-Zk?e=KhDIof" },
+        { ano: "2022", cat: "Flora", titulo: "Population structure, diametric distribution and use of Commiphora leptopholoeos (Mart.) JB Gillett in arboreal Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCUYV_r6seYRLONLP0Awjs2ASM2MSyVNPnOXh2-yYVWdMc?e=h2PMxv" },
+        { ano: "2022", cat: "Fauna", titulo: "Thermal tolerances and global warming in Astyanax bimaculatus", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAWDLyiwjysSK7EqZ60uJ2EAbLgMYe2QcD5BEIhbBPPW38?e=5cikle" },
+        { ano: "2023", cat: "Fauna", titulo: "Filogeografia da espécie Subulo gouazoubira na Caatinga", link: "https://repositorio.unesp.br/server/api/core/bitstreams/8068910d-1643-43df-aa77-dce9d48f6882/content" },
+        { ano: "2023", cat: "Fauna", titulo: "Avaliação da repelência do óleo essencial de Croton tetradenius, conservado em baixas temperaturas, sobre adultos de Aedes aegypti", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCvejxEAjCxQpd5gbSTwTeTAQiwZCkR2lmO4nLF03WUCcA?e=hegt5J" },
+        { ano: "2023", cat: "Manejo/Outros", titulo: "Effect of Croton tetradenius essential oil on Aedes aegypti", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDUs8ZZmoeHQqnF6g2OXG3gAbdI63xquyEhgpkFsJOlIoU?e=ObqSfV" },
+        { ano: "2023", cat: "Manejo/Outros", titulo: "Quantifying diameter distributions in seasonally dry tropical forest", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDj6YYQFyWRR6V7cVQJtJ2qARLcswDttNVvSHRbOZbIKNU?e=ev1pF0" },
+        { ano: "2023", cat: "Flora", titulo: "Florivoria em espécies da Floresta Nacional de Contendas do Sincorá, Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBNn4Qwib1USL9eEF-MdtBUAUMZDz_hETQ0vu0EPMaIBvE?e=ve41wL" },
+        { ano: "2023", cat: "Flora", titulo: "Visitantes florais de Passiflora foetida (Passifloraceae) e Spondias tuberosa (Anacardiaceae) na Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCLoTbdmJcLQpHXDA1-vo9QAUXIfQe-CSdgaQ5rCdUh74g?e=aQgS1y" },
+        { ano: "2023", cat: "Flora", titulo: "Visitantes florais de Colicodendron yco (Capparaceae) em duas áreas de Caatinga na Bahia", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAgeNOVxnT_Torj58KbuiKqAeY7YpfxoXWA283bxB_U2iE?e=oQGEAp" },
+        { ano: "2023", cat: "Flora", titulo: "Visitantes florais de quatro espécies da Floresta Nacional de Contendas do Sincorá, no sudoeste da Bahia", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBVGwSM4Y54Qa64g-AJYEthAWyzzdm-B5tuCL0CIpgUfS8?e=foeOpK" },
+        { ano: "2023", cat: "Flora", titulo: "Fungos micorrízicos arbusculares e glomalina em área de Caatinga submetida ao manejo florestal", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD3HWoK_kaPTYg2ai-LBGYeAdCa4uzkKs4chkOgkg5kDc0?e=vbTSMl" },
+        { ano: "2023", cat: "Manejo/Outros", titulo: "Uso de Redes Neurais Artificiais na estimativa volumétrica", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCEhtoIJ1OxQ4I2HtpIgYBRAUhCqtaNcXA7dBasxDJlw4s?e=jrvk8j" },
+        { ano: "2023", cat: "Manejo/Outros", titulo: "Natural regeneration dynamics in caatinga submitted to forest management", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDK3pcQFzjfR5LmFsE7ztwgAfZB04iNfp2DvISHc9Dl_Pk?e=lZVXQH" },
+        { ano: "2023", cat: "Manejo/Outros", titulo: "Variação sazonal da serapilheira e do nitrogênio em área de Caatinga manejada", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDHHsBpeJTnR6wnIfK38bMXAdWnoJHIE_xmpGEwPROwreg?e=W8BiY8" },
+        { ano: "2023", cat: "Fauna", titulo: "Influência de diferentes tipos de manejo na diversidade de besouros xilófagos na Caatinga arbórea, Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBq3mCsU7dgRq2dQnDAH0WGAbHjjxBTRdK_iXfIKuIiZYg?e=FuCqYg" },
+        { ano: "2023", cat: "Fauna", titulo: "Diversidade de insetos sob a influência de diferentes tipos de manejo na Caatinga arbórea, Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDwhS8T5bYNSJ6y5dtjoynvAXj7SV6kuJi4AROR5Ms3Guw?e=xamslL" },
+        { ano: "2023", cat: "Flora", titulo: "Croton argenteus (Euphorbiaceae): extração aquosa, prospecção fitoquímica e avaliação larvicida em Aedes aegypti (Diptera: Culicidae)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDDYBYHCUTvQ6c--TXygCtBAa8MW4h8PJi6t0_4rDIGNyc?e=HP52ds" },
+        { ano: "2024", cat: "Flora", titulo: "Composição química do óleo essencial de Cenostigma macrophyllum", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDNIi-rmAvlR5GtV2goFy9ZAWwpvARRl_nhmkGomB3jlC4?e=qmtEhm" },
+        { ano: "2024", cat: "Flora", titulo: "Atividades anti-inflamatória e sedativa de Ctenodon martii Benth", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCpzQfIEfQmTpwzpW_PoOW6ARm7f4nqQ1GNKJvfOvjG6k0?e=gtfsd0" },
+        { ano: "2024", cat: "Manejo/Outros", titulo: "Influência do manejo florestal sobre a diversidade de Bostrichidae (Coleoptera) em uma Floresta Seca", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDOi36nX3qsRbn_Tj4Rg7GyAQhzte0X0wpUel4tzD3kNkA?e=3k5Ada" },
+        { ano: "2024", cat: "Flora", titulo: "Avaliação das atividades anti-inflamatória, antinociceptiva e cicatrizante de Ctenodon martii Benth", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQA-_T6OuYX_RqUJZC_2NnS5AeCemAkefBwtwgMZqP3CZ38?e=t8XLqA" },
+        { ano: "2024", cat: "Fauna", titulo: "Levantamento e variação sazonal de insetos na Floresta Nacional Contendas do Sincorá (Bahia)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQC73hCHoXgKR4tU24fNu1WWAegpREOtud4eujaTfq2YdjU?e=Vca9Mb" },
+        { ano: "2024", cat: "Flora", titulo: "Chuva de sementes em períodos seco e úmido em floresta de Caatinga manejada", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAe4M9GNt7MSYsB_N4-BG-pAXTsnaZnM026R7O5y5mTIRM?e=P6dAuA" },
+        { ano: "2024", cat: "Flora", titulo: "Banco de plântulas como indicador de sustentabilidade em Caatinga submetida a manejo florestal", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDW1yuWRRcxSb6k7o6mI9fpAc40dLH7NtMCcAiyGCq-R6A?e=J1vOKY" },
+        { ano: "2024", cat: "Manejo/Outros", titulo: "Teor de carbono lábil do solo em caatinga sob manejo florestal", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDP14jjrnA9SoviiboHPA-rAVQ8dPDM97r3Jle4qdvI65Y?e=llLtY8" },
+        { ano: "2024", cat: "Manejo/Outros", titulo: "Does the Caatinga Dry-Forest Management Change the Litter Composition and Nutrient Stocks?", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCqORUPZp4QS7k0q2UVOfVbATRPbgLZp-duNvwP71W-3lY?e=5eXj1k" },
+        { ano: "2025", cat: "Manejo/Outros", titulo: "Projeção da Mortalidade de Árvores em Caatinga via RNA", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQA5pLHJh0xVQ4HnJ6AroX4xAXANK-1EjJhs1MTeQVykvts?e=oXOFLC" },
+        { ano: "2025", cat: "Manejo/Outros", titulo: "Aplicação de sensoriamento remoto para predição florestal", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCEnPX0yWoMS5rpGytufYdzAep3KvHI7KwVHqoMHQN4d8I?e=uMeK6x" },
+        { ano: "2025", cat: "Manejo/Outros", titulo: "Atividades lúdicas como instrumento de divulgação científica", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD18M4C3s46R5KWS4MSsyp-AWO3yNM5H3B8I_LYgU5-F8Q?e=a9whRC" },
+        { ano: "2025", cat: "Manejo/Outros", titulo: "A Importância da FLONA Contendas do Sincorá para a Conservação da Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDEIid-N2liSJGMxQuytWgwAZngtG7kDqnhk7zJVGaiv5k?e=CZXEeo" },
+        { ano: "2025", cat: "Fauna", titulo: "Geometric morphometrics and phenotypic divergence in Thrichomys inermis", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBBLC4sJuGiRbbnSNic6O9QAfL4x15J5Td1AnavKW2Xua8?e=CLv0OJ" },
+        { ano: "2025", cat: "Fauna", titulo: "Contrasting anuran communities in Caatinga landscapes: effects of conservation status on species richness and composition", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCOXN7MQ5IoR7auvLcUiSENAd7CvWrTAh-qLvFt3zOlLnY?e=5nH5k1" },
+        { ano: "2025", cat: "Manejo/Outros", titulo: "Floresta Nacional Contendas do Sincorá: usos sustentáveis", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBUzOnL_KX0RoPFM0aScNgtAQ63-YojNU0m4MowoR60pQI?e=0VEocJ" }
+    ];
+
+    function init() {
+        const selAno = document.getElementById('filterAno');
+        if (!selAno) return;
+        selAno.innerHTML = '<option value="">Todos os Anos</option>';
+        const anos = [...new Set(db.map(d => d.ano))].sort((a, b) => b - a);
+        anos.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value = a;
+            opt.textContent = a;
+            selAno.add(opt);
+        });
+        filterData();
+    }
+
+    function filterData() {
+        const anoSelected = document.getElementById('filterAno').value;
+        const searchTerm = document.getElementById('searchTerm').value.toLowerCase().trim();
+        const cats = [];
+        if(document.getElementById('chkFauna').checked) cats.push("Fauna");
+        if(document.getElementById('chkFlora').checked) cats.push("Flora");
+        if(document.getElementById('chkOutros').checked) cats.push("Manejo/Outros");
+
+        const filtered = db.filter(d => {
+            const matchAno = anoSelected === "" || d.ano === anoSelected;
+            const matchCat = cats.includes(d.cat);
+            const matchTerm = d.titulo.toLowerCase().includes(searchTerm);
+            return matchAno && matchCat && matchTerm;
+        });
+
+        filtered.sort((a, b) => parseInt(b.ano) - parseInt(a.ano));
+        render(filtered);
+    }
+
+    function render(data) {
+        const tbody = document.querySelector('#dataTable tbody');
+        const kpi = document.getElementById('kpiTotal');
+        if (kpi) kpi.innerText = data.length;
+        if (!tbody) return;
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted">Nenhum resultado encontrado.</td></tr>`;
+            return;
+        }
+
+        let rowsHtml = '';
+        data.forEach(d => {
+            const badgeClass = d.cat === 'Fauna' ? 'badge-fauna' : (d.cat === 'Flora' ? 'badge-flora' : 'badge-outros');
+            const url = d.link && d.link.startsWith('http') ? d.link : '#';
+            const linkBtn = d.link ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="btn-link-download">Abrir PDF</a>` : '-';
+
+            rowsHtml += `<tr>
+                <td class="fw-bold text-success">${d.ano}</td>
+                <td><span class="badge ${badgeClass} px-3 py-2">${d.cat}</span></td>
+                <td class="fw-medium">${d.titulo}</td>
+                <td class="text-center">${linkBtn}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = rowsHtml;
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
