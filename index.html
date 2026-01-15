@@ -8,7 +8,6 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; }
         
-        /* Header */
         .header-container { 
             background: white; 
             padding: 20px; 
@@ -24,7 +23,6 @@
         .header-text h2 { color: #1b5e20; font-weight: 800; margin: 0; letter-spacing: -0.5px; font-size: 1.6rem; }
         .header-text h5 { font-size: 1rem; }
         
-        /* Cards e KPIs */
         .card { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .kpi-card { 
             background: linear-gradient(135deg, #2e7d32, #1b5e20); 
@@ -39,7 +37,6 @@
         }
         .filter-box { background: white; padding: 20px; border-radius: 15px; border: 1px solid #e0e0e0; margin-bottom: 20px; }
         
-        /* Tabela Personalizada */
         .table-responsive { 
             max-height: 700px; 
             overflow-y: auto; 
@@ -56,7 +53,6 @@
         #dataTable th { padding: 15px; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; border: none; }
         #dataTable td { padding: 12px 15px; vertical-align: middle; font-size: 0.9rem; border-bottom: 1px solid #eee; }
         
-        /* Botões e Badges */
         .btn-link-download { 
             background-color: #1b5e20; 
             color: white !important; 
@@ -82,7 +78,6 @@
             padding-left: 15px; 
         }
 
-        /* Responsividade */
         @media (max-width: 768px) {
             .header-container { justify-content: center; text-align: center; }
             #dataTable th:nth-child(2), #dataTable td:nth-child(2) { display: none; }
@@ -173,16 +168,17 @@
         { ano: "2008", cat: "Manejo/Outros", titulo: "Diagnóstico e mapeamento das ações de comunicação e educação ambiental no âmbito do SNUC", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCmN_yQmVLfTp3Udwwe3ShBARVL7YZ7XrXLQxqYTn3Wa0U?e=02Cf6W" },
         { ano: "2009", cat: "Fauna", titulo: "Hoplosternum littorale na Floresta Nacional Contendas do Sincorá, Bahia: resultados parciais", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQChb8BeL5elT469agUH9v56ASFAx2fvaWaYA3z_R8V4xEM?e=NLzI0K" },
         { ano: "2009", cat: "Fauna", titulo: "Diversidade de formigas de áreas preservadas e em regeneração da Caatinga da FLONA Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD_h4nQKbAuSLO2CgYF4jzhAQy4eo-T6rR4uoG59sFxXvY?e=08h3S1" },
+        { ano: "2009", cat: "Flora", titulo: "Avaliação das atividades antimicrobiana, antioxidante e anti-inflamatória de Anadenanthera macrocarpa", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQChb8BeL5elT469agUH9v56ASFAx2fvaWaYA3z_R8V4xEM?e=GqbaCf" },
         { ano: "2011", cat: "Flora", titulo: "Avaliação das atividades antimicrobiana, antioxidante e anti-inflamatória de Anadenanthera macrocarpa (Benth.) Brenan", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDy9_ZUsIimSq1wYMrqqwe2AWlZG2obQnCiZ86B-yNt7gI?e=isS8km" },
         { ano: "2011", cat: "Fauna", titulo: "Avifauna da FLONA Contendas do Sincorá, Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBL1TU8tXO0QKrV832YEZWjAX-_m_GjBKdemFgVg_8KT9o?e=g8udNz" },
         { ano: "2012", cat: "Fauna", titulo: "Dung beetles (Coleoptera: Scarabaeidae) of the Floresta Nacional Contendas do Sincorá", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCCekcwIbG9RKF0FoXqztoaAUPVvs2fPtSWxq-ZGjww9Ds?e=JJ4G00" },
         { ano: "2012", cat: "Fauna", titulo: "Riqueza de formigas em áreas preservadas e em regeneração de caatinga arbustiva", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCxUNNbD5ZuTqJsbhvJLCwCAVj_cs0OreJgcfpDaG-JNjY?e=lTHrR7" },
         { ano: "2012", cat: "Flora", titulo: "Avaliação da atividade antimicrobiana do extrato etanólico de Phanera flexuosa", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD2bKgGRMPFTL-AslU4no7DASag6WJGSQDQQOsKDcg0PVc?e=Xb5ebv" },
-        { ano: "2012", cat: "Flora", titulo: "Flora da Floresta Nacional Contendas do Sincorá – Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQADI1z_m0h-TYX0MF6BakzJAdjrw9jtC1WhxgM6Jvg1KIY?e=Hqhw03" },
+        { ano: "2012", cat: "Flora", titulo: "Flora da Floresta Nacional Contendas do Sincorá - Bahia, Brasil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQADI1z_m0h-TYX0MF6BakzJAdjrw9jtC1WhxgM6Jvg1KIY?e=Hqhw03" },
         { ano: "2012", cat: "Flora", titulo: "Plantas medicinais usadas pela comunidade do povoado de Laços (Tanhaçú/Bahia)", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQAp595lRgg-SJDbkp2c1HqVAXBC4LdrCMlZ8aIMi6lux1E?e=xVoWpA" },
         { ano: "2012", cat: "Fauna", titulo: "Monitoramento de mamíferos terrestres de médio e grande porte em Unidades de Conservação Federais da Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD5CS-aGecvTKzhCU0ZU7o9ARdDt_Angh2gwPk0zqfLbPw?e=1HdsDw" },
         { ano: "2012", cat: "Fauna", titulo: "Monitoramento de Squamata em Unidades de Conservação do bioma Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBTmYYBH01FSo4IR-8NWB4UATnq46Y0xVdJKFJUwRIcS4o?e=HbehQf" },
-        { ano: "2012", cat: "Flora", titulo: "Diversidade de cactáceas na Floresta Nacional de Contendas do Sincorá – BA: implicações para o monitoramento", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDdKEjtX4o9SJHVQ10dlqGPAbPngfQ1i0j8_brP3a-VY60?e=fyrqff" },
+        { ano: "2012", cat: "Flora", titulo: "Diversidade de cactáceas na Floresta Nacional de Contendas do Sincorá - BA: implicações para o monitoramento", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDdKEjtX4o9SJHVQ10dlqGPAbPngfQ1i0j8_brP3a-VY60?e=fyrqff" },
         { ano: "2013", cat: "Manejo/Outros", titulo: "Avaliação do perfil químico e atividade larvicida do óleo de Croton linearifolius sobre o Aedes aegypti", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCQpfyghzIkQ4ose7FFBY-AAXqwju_Qx3Pp4KjtV6NT5uU?e=ey2cqC" },
         { ano: "2013", cat: "Flora", titulo: "Xilanase de Penicillium chrysogenum: produção em um resíduo agroindustrial, purificação e propriedades bioquímicas", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDctBf907GYTKWrR3IrGVmzAe-b1-4FXimfa2lBWrP0YJQ?e=jP4bqR" },
         { ano: "2013", cat: "Flora", titulo: "Isolamento e identificação de compostos bioativos de Mimosa hostilis Benth.", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQD1Er_vrZY4Sp50EkFzMt80AesG6KcGNeO-dfBtge69IG8?e=Ow7g3Z" },
