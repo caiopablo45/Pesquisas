@@ -29,11 +29,11 @@
 
         /* AJUSTE DE FONTE PARA COMPUTADOR */
         @media (min-width: 992px) {
-            #dataTable td { font-size: 1.2rem; padding: 18px 15px; } 
+            #dataTable td { font-size: 1.1rem; padding: 18px 15px; } 
             #dataTable th { font-size: 1.1rem; padding: 18px 15px; }
-            .btn-link-download { padding: 10px 20px !important; font-size: 1rem !important; }
-            .form-label { font-size: 1.1rem !important; }
-            .form-select, .form-control { font-size: 1.1rem !important; height: 50px; }
+            .btn-link-download { padding: 8px 18px !important; font-size: 0.95rem !important; }
+            .form-label { font-size: 1rem !important; }
+            .form-select, .form-control { font-size: 1.05rem !important; height: 48px; }
             .titulo-secao { font-size: 1.6rem; }
         }
         
@@ -51,11 +51,11 @@
         
         .btn-link-download { 
             background-color: var(--primary-green); color: white !important; border-radius: 30px; 
-            text-decoration: none; display: inline-block; transition: 0.3s; font-weight: 600;
+            text-decoration: none; display: inline-block; transition: 0.3s; font-weight: 600; padding: 6px 15px;
         }
         .btn-link-download:hover { background-color: var(--hover-green); transform: scale(1.05); }
 
-        .badge { font-weight: 600; padding: 8px 15px !important; }
+        .badge { font-weight: 600; padding: 8px 12px !important; border-radius: 8px; }
         .badge-fauna { background-color: #ef6c00; }
         .badge-flora { background-color: #2e7d32; }
         .badge-outros { background-color: #455a64; }
@@ -93,10 +93,10 @@
                     </div>
                     <div class="col-12 col-md-5">
                         <label class="form-label fw-bold">CATEGORIAS</label>
-                        <div class="d-flex gap-3 pt-2">
+                        <div class="d-flex gap-3 pt-2 flex-wrap">
                             <div class="form-check"><input class="form-check-input" type="checkbox" id="chkFauna" onchange="filterData()" checked><label class="form-check-label">Fauna</label></div>
                             <div class="form-check"><input class="form-check-input" type="checkbox" id="chkFlora" onchange="filterData()" checked><label class="form-check-label">Flora</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" id="chkOutros" onchange="filterData()" checked><label class="form-check-label">Outros</label></div>
+                            <div class="form-check"><input class="form-check-input" type="checkbox" id="chkOutros" onchange="filterData()" checked><label class="form-check-label">Manejo/Outros</label></div>
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
         
         <div class="col-12 col-xl-3">
             <div class="kpi-card shadow-sm h-100 d-flex flex-column justify-content-center">
-                <h6 class="text-uppercase small opacity-75 fw-bold mb-1">Total de Pesquisas Catalogadas</h6>
+                <h6 class="text-uppercase small opacity-75 fw-bold mb-1">Pesquisas Encontradas</h6>
                 <h1 id="kpiTotal" class="display-4 fw-bold m-0">0</h1>
             </div>
         </div>
@@ -121,7 +121,7 @@
                         <th class="text-center" style="width: 100px;">Ano</th>
                         <th style="width: 150px;">Área</th>
                         <th>Título da Pesquisa</th>
-                        <th class="text-center" style="width: 150px;">Acesso</th>
+                        <th class="text-center" style="width: 120px;">Acesso</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -270,10 +270,11 @@
         { ano: "2025", cat: "Fauna", titulo: "Geometric morphometrics and phenotypic divergence", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBBLC4sJuGiRbbnSNic6O9QAfL4x15J5Td1AnavKW2Xua8?e=CLv0OJ" },
         { ano: "2025", cat: "Fauna", titulo: "Contrasting anuran communities in Caatinga landscapes", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQCOXN7MQ5IoR7auvLcUiSENAd7CvWrTAh-qLvFt3zOlLnY?e=5nH5k1" },
         { ano: "2025", cat: "Manejo/Outros", titulo: "Aplicação do Sensoriamento Remoto na Predição de Atributos Florestais em Floresta Seca", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBJCUpSdpSMT6YSVgR-g8D4AQQob6n-mj2aY89XLxSjywc?e=2j8mqb" },
-        { ano: "2026", cat: "Faua", titulo: "Seasonal variation of insect assemblages in a protected area of the Caatinga,
-northeastern Brazil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBJCUpSdpSMT6YSVgR-g8D4AQQob6n-mj2aY89XLxSjywc?e=2j8mqb" },
-        { ano: "2025", cat: "Manejo/Outros", titulo: "Floresta Nacional Contendas do Sincorá: usos sustentáveis", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQBUzOnL_KX0RoPFM0aScNgtAQ63-YojNU0m4MowoR60pQI?e=0VEocJ" }
+        { ano: "2025", cat: "Manejo/Outros", titulo: "Floresta Nacional Contendas do Sincorá: usos sustentáveis", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDBTzbg3twfTLL3TPgCjS0oAQ27_wG3KQnlE8_PwZhOnAM?e=g8URO4" },
+      { ano: "2026", cat: "Fauna", titulo: "Seasonal variation of insect assemblages in aprotected area of the Caatinga", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQDFnODR1pS8S5ihzFmwNlCVAQBUZW4JBzJn1puJXyigLdA?e=EJnEFe" },
+     { ano: "2026", cat: "Fauna", titulo: "A importância da Floresta Nacional Contendas do Sincorá para a conservação da Caatinga e o desenvolvimento sustentável", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/leia_souza_icmbio_gov_br/IQC8Vk1DkPdsTJNSe_GxlC6yASK4lPM95GeyRT_3oogSI1M?e=0HCKLO" }
     ];
+
 
     function filterData() {
         const ano = document.getElementById('filterAno').value;
@@ -285,7 +286,13 @@ northeastern Brazil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/l
         const filtered = db.filter(d => {
             const mAno = (ano === "" || d.ano === ano);
             const mTerm = d.titulo.toLowerCase().includes(term);
-            const mCat = (d.cat === 'Fauna' && fFauna) || (d.cat === 'Flora' && fFlora) || (d.cat === 'Manejo/Outros' && fOutros);
+            
+            // Lógica robusta para categorias
+            let mCat = false;
+            if (fFauna && d.cat.includes('Fauna')) mCat = true;
+            if (fFlora && d.cat.includes('Flora')) mCat = true;
+            if (fOutros && (d.cat.includes('Manejo') || d.cat.includes('Outros'))) mCat = true;
+            
             return mAno && mTerm && mCat;
         });
         render(filtered);
@@ -296,31 +303,41 @@ northeastern Brazil", link: "https://icmbioe5-my.sharepoint.com/:b:/g/personal/l
         document.getElementById('kpiTotal').innerText = data.length;
         
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5">Nenhum artigo encontrado.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5">Nenhum artigo encontrado com esses filtros.</td></tr>';
             return;
         }
 
-        tbody.innerHTML = data.map(d => `
+        tbody.innerHTML = data.map(d => {
+            // Define a cor da badge dinamicamente
+            let badgeClass = 'badge-outros';
+            if (d.cat.includes('Fauna')) badgeClass = 'badge-fauna';
+            else if (d.cat.includes('Flora')) badgeClass = 'badge-flora';
+
+            return `
             <tr>
-                <td class="fw-bold text-success text-center">${d.ano}</td>
-                <td><span class="badge ${d.cat === 'Fauna' ? 'badge-fauna' : (d.cat === 'Flora' ? 'badge-flora' : 'badge-outros')}">${d.cat}</span></td>
-                <td>${d.titulo}</td>
-                <td class="text-center"><a href="${d.link}" target="_blank" rel="noopener" class="btn-link-download">Abrir</a></td>
+                <td class="fw-bold text-success text-center align-middle">${d.ano}</td>
+                <td class="align-middle"><span class="badge ${badgeClass}">${d.cat}</span></td>
+                <td class="align-middle">${d.titulo}</td>
+                <td class="text-center align-middle"><a href="${d.link}" target="_blank" rel="noopener" class="btn-link-download">Abrir</a></td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Popula o select de Anos automaticamente do mais recente para o mais antigo
         const anos = [...new Set(db.map(d => d.ano))].sort((a, b) => b - a);
         const sel = document.getElementById('filterAno');
         anos.forEach(a => {
             const opt = document.createElement('option');
-            opt.value = a; opt.textContent = a;
+            opt.value = a; 
+            opt.textContent = a;
             sel.appendChild(opt);
         });
-        filterData();
+        
+        filterData(); // Carrega os dados iniciais
     });
 </script>
+
 </body>
 </html>
-
